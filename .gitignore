@@ -1,0 +1,26 @@
+# Fichiers de construction et de compilation Arduino
+# Arduino IDE 1.x & 2.x
+*.elf
+*.bin
+*.hex
+*.lst
+*.map
+*.o
+*.obj
+*.s
+*.sym
+
+# Dossiers de compilation (dépend de la version de l'IDE)
+build/
+.build/
+.arduino-cli/
+.arduinoIDE/
+.arduino-ide-build/
+
+# Fichiers de configuration de l'IDE ou du système
+*.code-workspace
+.vscode/
+
+# Fichiers du système d'exploitation
+.DS_Store
+Thumbs.db
