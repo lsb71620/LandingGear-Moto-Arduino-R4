@@ -52,7 +52,7 @@
 #include <SD.h>     // pour la gestion de la carte microSD (D4)
 #include <SPI.h>    // bus SPI utilisé par le lecteur SD
 
-// Si intégration du GPS dans le système
+// Intégration du GPS dans le système
 #include <TinyGPS++.h>
 // -------------------------------------------------------------------------------------
 
@@ -62,7 +62,7 @@
 
 // -------------------------------------------------------------------------------------
 TinyGPSPlus gps;
-// Instance pour analyser les données GPS
+// Instance pour analyser les données GPS NEO-7M 
 // -------------------------------------------------------------------------------------
 
 // Broche Chip Select pour la carte SD (D4 selon les commentaires SPI)
@@ -309,6 +309,65 @@ void logEvent(const String &event)
     Serial.println(event);
   }
 }
+
+// ==========================
+// Fonction d’envoi UBX
+// ==========================
+void envoyerUBX(const uint8_t *msg, uint8_t len) {
+  Serial1.write(0xB5); // Sync char 1
+  Serial1.write(0x62); // Sync char 2
+  for (uint8_t i = 0; i < len; i++) {
+    Serial1.write(msg[i]);
+  }
+}
+
+// ==========================
+// Fonction configGPS() avec les commandes UBX
+// ==========================
+void configGPS() {
+  delay(200); // attendre que le GPS démarre
+
+  // NAV5 : mode Automotive
+  const uint8_t setNAV5[] = {
+    0x06, 0x24, 0x24, 0x00, 0xFF, 0xFF, 0x04, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x10, 0x27, 0x00, 0x00,
+    0x05, 0x00, 0xFA, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
+    0x00, 0x00, 0x00, 0x00
+  };
+
+  // RATE : 200 ms (5 Hz)
+  const uint8_t setRATE[] = {
+    0x06, 0x08, 0x06, 0x00, 0xC8, 0x00, 0x01, 0x00, 0x01, 0x00
+  };
+
+  // Désactivation des trames NMEA inutiles
+  const uint8_t disableGGA[] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const uint8_t disableGLL[] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const uint8_t disableGSA[] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x02, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const uint8_t disableGSV[] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x03, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const uint8_t disableRMC[] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+  const uint8_t disableGNS[] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x0D, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+  // Activation VTG uniquement
+  const uint8_t enableVTG[] = {0x06, 0x01, 0x08, 0x00, 0xF0, 0x05, 0x01, 0x00, 0x00, 0x00, 0x00, 0x00};
+
+  // Envoi des commandes
+  envoyerUBX(setNAV5, sizeof(setNAV5));
+  delay(50);
+  envoyerUBX(setRATE, sizeof(setRATE));
+  delay(50);
+  envoyerUBX(disableGGA, sizeof(disableGGA));
+  envoyerUBX(disableGLL, sizeof(disableGLL));
+  envoyerUBX(disableGSA, sizeof(disableGSA));
+  envoyerUBX(disableGSV, sizeof(disableGSV));
+  envoyerUBX(disableRMC, sizeof(disableRMC));
+  envoyerUBX(disableGNS, sizeof(disableGNS));
+  delay(50);
+  envoyerUBX(enableVTG, sizeof(enableVTG));
+  delay(50);
+}
+
 // ==========================
 // Fonctions matérielles (drivers moteurs)
 // ==========================
@@ -659,6 +718,8 @@ void setup() {
   // Initialisation du GPS (port série matériel Serial1 sur D0/D1)
   // -------------------------------------------------------------------------------------
   Serial1.begin(9600);
+
+  configGPS(); // Configuration du GPS
 
   // Initialisation du port série pour le debug
   Serial.begin(115200);
