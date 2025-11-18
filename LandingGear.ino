@@ -43,6 +43,7 @@
   - Ne pas connecter les moteurs avant calibration à vide.
   - Appui long sur bouton_Calib (5s) pour calibrer les capteurs.
   - Vérifier les seuils de courant et la logique des fins de course.
+  - Ne pas mélanger les masses Moto batterie et Arduino (GND)
   ============================================================================
 */
 
@@ -53,7 +54,7 @@
 #include <SPI.h>    // bus SPI utilisé par le lecteur SD
 
 // Intégration du GPS dans le système
-#include <TinyGPS++.h>
+#include <TinyGPSPlus.h>
 // -------------------------------------------------------------------------------------
 
 // ==========================
