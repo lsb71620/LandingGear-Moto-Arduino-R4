@@ -4,8 +4,6 @@ Ce projet open source est un système électronique avancé de pilotage pour bé
 
 ## Contexte et Philosophie du Projet
 
-Ce projet est une réponse directe à une défaillance du marché. Suite à l'acquisition d'un système de béquillage motorisé coûteux (même chez un revendeur local [TAMOTO.fr]), des **défauts de conception critiques** ont été identifiés dans l'électronique de puissance et la gestion de la sécurité. En l'absence totale de service après-vente ou de support fiable, l'achat de tels produits représente un risque injustifié, rendant l'achat direct en Chine souvent plus logique et bien moins cher.
-
 L'objectif de ce dépôt est de fournir une **solution alternative, open source, fiable et auditable** par la communauté, corrigeant ces défauts par une ingénierie plus rigoureuse (double surveillance de courant, synchronisation active, sécurité GPS absolue).
 
 **Ce code est mon don à la communauté** pour que d'autres puissent bénéficier d'un système de sécurité de haute qualité, construit sur des bases saines.
@@ -65,5 +63,6 @@ Le fichier **`LandingGearMoto_ArduinoNanoR4.pdf`** contient le schéma de câbla
 ---
 
 ## Contribuer
+
 
 Les contributions sont les bienvenues ! Si vous trouvez un bug, proposez une amélioration ou ajoutez de nouvelles fonctionnalités, n'hésitez pas à soumettre une *Pull Request* ou à ouvrir une *Issue* sur ce dépôt.
